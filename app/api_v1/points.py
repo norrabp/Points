@@ -1,5 +1,6 @@
 from . import api
 from .. import Transactions, PayerTotals
+from ..exceptions import ValidationError
 from ..core import core
 from flask import jsonify, request
 from datetime import datetime
@@ -12,8 +13,13 @@ def index():
 
 @api.route('/points/add-transaction', methods=['POST'])
 def add_transaction():
-    points = int(request.json["points"])
-    payer = request.json["payer"]
+    try:
+        points = int(request.json["points"])
+        payer = request.json["payer"]
+    except KeyError as e:
+        raise ValidationError('Invalid request: missing ' + e.args[0])
+    except TypeError as e:
+        raise ValidationError('Invalid request: missing points and payer')
     if points < 0 and payer in PayerTotals and PayerTotals[payer] + points < 0:
         return jsonify({
             'Message': "Transaction would make payer points lets than 0",
@@ -30,7 +36,7 @@ def add_transaction():
         "points": points,
         "points_remaining": points
     })
-    if request.json["payer"] not in PayerTotals:
+    if payer not in PayerTotals:
         PayerTotals[payer] = points
     else:
         PayerTotals[payer] += points
@@ -45,7 +51,14 @@ def get_payers():
 
 @api.route('/points/use-points', methods=['Post'])
 def spend_points():
-    points_to_spend = int(request.json["points"])
+    try:
+        points_to_spend = int(request.json["points"])
+    except KeyError as e:
+        raise ValidationError('Invalid request: missing ' + e.args[0])
+    except TypeError as e:
+        raise ValidationError('Invalid request: missing points')
+    if points_to_spend < 0:
+        raise ValidationError('Invalid request: points must not be negative')
     total_points = sum(PayerTotals.values())
     spent_per_payer = dict()
     if total_points < points_to_spend:
