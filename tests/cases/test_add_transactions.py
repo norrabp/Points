@@ -1,13 +1,13 @@
 import unittest
 from app import create_app, PayerTotals, Transactions
-from ..utils import test_client,timestamp
+from ..utils import client,timestamp
 
-class TestAPI(unittest.TestCase):
+class TestTransactions(unittest.TestCase):
     def setUp(self):
         self.app = create_app('testing')
         self.ctx = self.app.app_context()
         self.ctx.push()
-        self.client = test_client.TestClient(self.app)
+        self.client = client.TestClient(self.app)
 
     def tearDown(self):
         PayerTotals.clear()
