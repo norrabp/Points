@@ -6,12 +6,12 @@ from flask import jsonify, request
 from datetime import datetime
 
 
-@api.route('/', methods=['GET'])
+@api.route('/transactions/', methods=['GET'])
 def index():
     return jsonify(Transactions)
 
 
-@api.route('/points/add-transaction', methods=['POST'])
+@api.route('/transactions/', methods=['POST'])
 def add_transaction():
     try:
         points = int(request.json["points"])
@@ -25,7 +25,7 @@ def add_transaction():
             'Message': "Transaction would make payer points lets than 0",
             'payer': payer,
             'points': PayerTotals[payer]
-        })
+        }), 304
     if "timestamp" in request.json:
         timestamp = request.json['timestamp']
     else:
@@ -41,15 +41,15 @@ def add_transaction():
     else:
         PayerTotals[payer] += points
     Transactions.sort(key=lambda x: datetime.strptime(x['timestamp'], '%Y-%m-%dT%H:%M:%SZ'))
-    return jsonify(Transactions)
+    return jsonify(Transactions), 201
 
 
-@api.route('/points/payers', methods=['GET'])
+@api.route('/points/', methods=['GET'])
 def get_payers():
     return jsonify(PayerTotals)
 
 
-@api.route('/points/use-points', methods=['Post'])
+@api.route('/points/', methods=['POST'])
 def spend_points():
     try:
         points_to_spend = int(request.json["points"])
@@ -75,5 +75,5 @@ def spend_points():
                 spent_per_payer[payer] -= points_used
         else:
             break
-    return jsonify(spent_per_payer)
+    return jsonify(spent_per_payer), 201
 

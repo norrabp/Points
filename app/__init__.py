@@ -1,15 +1,16 @@
 import os
 from flask import Flask
 
-Transactions = list()
-PayerTotals = dict()
+Transactions = []
+PayerTotals = {}
+
 
 def create_app(config_name):
     """Create an application instance."""
     app = Flask(__name__)
 
     # apply configuration
-    cfg = os.path.join(os.getcwd(), 'app/config', config_name + '.py')
+    cfg = os.path.join(os.getcwd(), 'config', config_name + '.py')
     app.config.from_pyfile(cfg)
 
     # register blueprints
