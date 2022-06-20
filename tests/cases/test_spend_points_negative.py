@@ -55,7 +55,7 @@ class TestSpendNegative(unittest.TestCase):
         except KeyError as e:
             self.assertTrue(False, 'Missing payer ' + e.args[0])
 
-    def test3Trans2Payer1Spend_SpendLTSum_OnlySecondPayerHasPoints(self):
+    def test3Trans2Payer1Spend_PayerWithNegLTSpend_OnlySecondPayerHasPoints(self):
         rv, json = self.client.post('/api/v1/transactions/', data={
             'points': 100,
             'payer': 'Fetch',
@@ -85,6 +85,43 @@ class TestSpendNegative(unittest.TestCase):
             self.assertTrue(json['Epic'] == 880)
         except KeyError as e:
             self.assertTrue(False, 'Missing payer ' + e.args[0])
+
+    def test4Trans2Payer1Spend_PayerWithNegGTSpend_OnlyFirstPayerHasPoints(self):
+        rv, json = self.client.post('/api/v1/transactions/', data={
+            'points': 100,
+            'payer': 'Fetch',
+            'timestamp': timestamp.getTimestampStr()
+        })
+        rv, json = self.client.post('/api/v1/transactions/', data={
+            'points': -50,
+            'payer': 'Fetch',
+            'timestamp': timestamp.getTimestampStr()
+        })
+        rv, json = self.client.post('/api/v1/transactions/', data={
+            'points': 50,
+            'payer': 'Epic',
+            'timestamp': timestamp.getTimestampStr()
+        })
+        rv, json = self.client.post('/api/v1/transactions/', data={
+            'points': 100,
+            'payer': 'Fetch',
+            'timestamp': timestamp.getTimestampStr()
+        })
+        rv, json = self.client.post('/api/v1/points/', data={
+            'points': 180
+        })
+        try:
+            self.assertTrue(json['Fetch'] == -130)
+            self.assertTrue(json['Epic'] == -50)
+        except KeyError as e:
+            self.assertTrue(False, 'Missing payer ' + e.args[0])
+        rv, json = self.client.get('/api/v1/points/')
+        try:
+            self.assertTrue(json['Fetch'] == 20)
+            self.assertTrue(json['Epic'] == 0)
+        except KeyError as e:
+            self.assertTrue(False, 'Missing payer ' + e.args[0])
+
 
 
 
