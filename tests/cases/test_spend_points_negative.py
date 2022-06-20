@@ -30,6 +30,7 @@ class TestSpendNegative(unittest.TestCase):
             'points': 90
         })
         self.assertTrue('message' in json)
+        self.assertTrue(rv.status_code == 200)
 
     def test2Trans1Payer1Spend_SpendLTSum_10Left(self):
         rv, json = self.client.post('/api/v1/transactions/', data={

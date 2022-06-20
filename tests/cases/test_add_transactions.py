@@ -61,6 +61,7 @@ class TestTransactions(unittest.TestCase):
             'payer': 'Fetch',
             'timestamp': second_instant
         })
+        rv, json = self.client.get('/api/v1/transactions/')
         self.assertTrue(len(json) == 2, "Number of transactions returned is " + str(len(json)) + " instead of 2")
         try:
             self.assertTrue(json[0]['timestamp'] == second_instant)

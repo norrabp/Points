@@ -22,10 +22,10 @@ def add_transaction():
         raise ValidationError('Invalid request: missing points and payer')
     if points < 0 and payer in PayerTotals and PayerTotals[payer] + points < 0:
         return jsonify({
-            'Message': "Transaction would make payer points lets than 0",
+            'message': "Transaction would make payer points lets than 0",
             'payer': payer,
-            'points': PayerTotals[payer]
-        }), 304
+            'payer_points': PayerTotals[payer]
+        }), 200
     if "timestamp" in request.json:
         timestamp = request.json['timestamp']
     else:

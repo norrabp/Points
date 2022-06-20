@@ -1,5 +1,6 @@
 import unittest
 from app import create_app, PayerTotals, Transactions
+from app.exceptions import ValidationError
 from ..utils import client,timestamp
 
 class TestInputs(unittest.TestCase):
@@ -29,3 +30,6 @@ class TestInputs(unittest.TestCase):
             'points': 101
         })
         self.assertTrue('message' in json)
+        self.assertTrue(rv.status_code == 200)
+
+    
