@@ -6,7 +6,10 @@ PayerTotals = {}
 
 
 def create_app(config_name):
-    """Create an application instance."""
+    """
+    Create an application instance. Load configuration and register blueprints
+    
+    """
     app = Flask(__name__)
 
     # apply configuration
