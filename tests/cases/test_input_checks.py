@@ -4,6 +4,9 @@ from app.exceptions import ValidationError
 from ..utils import client,timestamp
 
 class TestInputs(unittest.TestCase):
+    """
+    Test cases involving verifying that input does not make point totals negative
+    """
     def setUp(self):
         self.app = create_app('testing')
         self.ctx = self.app.app_context()

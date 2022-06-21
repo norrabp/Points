@@ -4,6 +4,10 @@ from ..utils import client,timestamp
 
 
 class TestSpendNegative(unittest.TestCase):
+    """
+    Test cases involving spending points when some of the transactions are 
+    negative
+    """
     def setUp(self):
         self.app = create_app('testing')
         self.ctx = self.app.app_context()

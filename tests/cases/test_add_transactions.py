@@ -3,6 +3,9 @@ from app import create_app, PayerTotals, Transactions
 from ..utils import client,timestamp
 
 class TestTransactions(unittest.TestCase):
+    """
+    Test cases involving adding transactions
+    """
     def setUp(self):
         self.app = create_app('testing')
         self.ctx = self.app.app_context()

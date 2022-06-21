@@ -5,6 +5,9 @@ from werkzeug.exceptions import NotFound, MethodNotAllowed
 from ..utils import client,timestamp
 
 class TestValidation(unittest.TestCase):
+    """
+    Test Case involving making sure app handles validation gracefully
+    """
     def setUp(self):
         self.app = create_app('testing')
         self.ctx = self.app.app_context()

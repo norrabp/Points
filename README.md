@@ -13,31 +13,9 @@ $ git clone https://github.com/norrabp/points.git platform
 Install project dependencies:
 
 ```
-cd 
-pip install -r requirements.txt
+cd Points
+./setup.sh
 ```
-
-Install the python environment if needed
-
-```
-pip install virtualenv
-```
-
-cd into whichever directory the python `env` directory is and activate with
-```
-source env/bin/activate
-```
-
-## Setup
-
-You will need to connect with whichever instance of a mysql database you will need to use
-
-##### MySQL setup:
-- Go into the config folder
-- Edit each config.py.example file with the following
-- set SQLALCHEMY_DATABASE_URI equal to the mysql database URI that you are going to be using
-
-##### 
 
 ## Environments
 If testing run the following command (may differ between systems)
