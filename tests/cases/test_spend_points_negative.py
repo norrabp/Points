@@ -67,6 +67,8 @@ class TestSpendNegative(unittest.TestCase):
 
     def test3Trans2Payer1Spend_PayerWithNegLTSpend_OnlySecondPayerHasPoints(self):
         """
+        Verify that spend takes negative transaction into account and spends
+        on the next transaction
         """
         rv, json = self.client.post('/api/v1/transactions/', data={
             'points': 100,
@@ -99,6 +101,11 @@ class TestSpendNegative(unittest.TestCase):
             self.assertTrue(False, 'Missing payer ' + e.args[0])
 
     def test4Trans2Payer1Spend_PayerWithNegGTSpend_OnlyFirstPayerHasPoints(self):
+        """
+        Verify that is the payer total is less than the amount to spend, but
+        the transaction for that payer is less than the payer total, the 
+        amount to spend is charged.
+        """
         rv, json = self.client.post('/api/v1/transactions/', data={
             'points': 100,
             'payer': 'Fetch',

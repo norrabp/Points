@@ -17,6 +17,9 @@ class TestValidation(unittest.TestCase):
         self.ctx.pop()
 
     def test1Trans1Payer1Spend_NegSpend_RespondMustNotBeNeg(self):
+        """
+        Test that a user cannot spend a negative amount of points
+        """
         rv, json = self.client.post('/api/v1/transactions/', data={
             'points': 100,
             'payer': 'Fetch',
@@ -30,6 +33,9 @@ class TestValidation(unittest.TestCase):
             self.assertTrue('message' in json)
 
     def testMethodNotSupportedError(self):
+        """
+        Test that a Method Not Supported error is handled gracefully
+        """
         rv, json = self.client.post('/api/v1/transactions/', data={
             'points': 100,
             'payer': 'Fetch',
@@ -47,6 +53,9 @@ class TestValidation(unittest.TestCase):
             self.assertTrue('message' in json)
 
     def testNotFound(self):
+        """
+        Test that a Not Found error is handled gracefully
+        """
         with self.assertRaises(NotFound):
             rv, json = self.client.get('/api/v1/bad/')
             self.assertTrue(rv.status_code == 404)
@@ -55,6 +64,9 @@ class TestValidation(unittest.TestCase):
             self.assertTrue('message' in json)
 
     def testRequiredJson(self):
+        """
+        Test that API handles missing input from certain fields
+        """
         with self.assertRaises(ValidationError):
             rv, json = self.client.post('/api/v1/transactions/', data={
                 'points': 100,
@@ -73,18 +85,4 @@ class TestValidation(unittest.TestCase):
             })
             self.assertTrue(rv.statusCode == 400)
 
-    def testNegTransMustNotMakePayerNeg(self):
-        rv, json = self.client.post('/api/v1/transactions/', data={
-            'points': 100,
-            'payer': 'Fetch',
-            'timestamp': timestamp.getTimestampStr(2022,1,5,12,0,0)
-        })
-        rv, json = self.client.post('/api/v1/transactions/', data={
-            'points': -101,
-            'payer': 'Fetch',
-            'timestamp': timestamp.getTimestampStr(2022,1,5,12,0,0)
-        })
-        self.assertTrue(rv.status_code == 200)
-        self.assertTrue('message' in json)
-        self.assertTrue(json['payer'] == 'Fetch')
-        self.assertTrue(json['payer_points'] == 100)
+    

@@ -40,4 +40,23 @@ class TestInputs(unittest.TestCase):
         self.assertTrue('message' in json)
         self.assertTrue(rv.status_code == 200)
 
+    def testNegTransMustNotMakePayerNeg(self):
+        """
+        Verify that a negative transaction cannot set a payer's total to 0
+        """
+        rv, json = self.client.post('/api/v1/transactions/', data={
+            'points': 100,
+            'payer': 'Fetch',
+            'timestamp': timestamp.getTimestampStr(2022,1,5,12,0,0)
+        })
+        rv, json = self.client.post('/api/v1/transactions/', data={
+            'points': -101,
+            'payer': 'Fetch',
+            'timestamp': timestamp.getTimestampStr(2022,1,5,12,0,0)
+        })
+        self.assertTrue(rv.status_code == 200)
+        self.assertTrue('message' in json)
+        self.assertTrue(json['payer'] == 'Fetch')
+        self.assertTrue(json['payer_points'] == 100)
+
     
