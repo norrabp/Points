@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+""" Run the unit tests for the application"""
 #import coverage
 import unittest
 from tests import suite

@@ -1,12 +1,24 @@
 import json
 from urllib.parse import urlsplit, urlunsplit
 
-
 class TestClient:
+    """ Class holding methods for sending HTTP requests to the web server"""
     def __init__(self, app):
         self.app = app
 
     def send(self, url, method='GET', data=None, headers={}):
+        """
+        Send HTTP request to the web server for unit test
+        arguments:
+            self: current client object
+            url: url to send HTTP request to
+            method: which HTTP method to perform the request with
+            data: data to send to server
+            headers: headers sent server to determine response type
+        returns:
+            A response variable containing the server's response
+            and the json object returned from the request
+        """
         # for testing, URLs just need to have the path and query string
         url_parsed = urlsplit(url)
         url = urlunsplit(('', '', url_parsed.path, url_parsed.query,

@@ -1,3 +1,4 @@
+""" Run the application """
 import os
 from app import create_app
 from flask import Flask

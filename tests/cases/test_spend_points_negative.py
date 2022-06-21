@@ -16,6 +16,11 @@ class TestSpendNegative(unittest.TestCase):
         self.ctx.pop()
 
     def test2Trans1Payer1Spend_SpendGTSum_RespondNotEnough(self):
+        """
+        Test that if a positive transaction plus a negative transaction is less
+        than the amount to spend, server returns 200 and a message saying
+        not enough
+        """
         rv, json = self.client.post('/api/v1/transactions/', data={
             'points': 100,
             'payer': 'Fetch',
@@ -33,6 +38,10 @@ class TestSpendNegative(unittest.TestCase):
         self.assertTrue(rv.status_code == 200)
 
     def test2Trans1Payer1Spend_SpendLTSum_10Left(self):
+        """
+        Verify that the points remaining for a payer after a spend is the 
+        positive transactions minus the negative transactions
+        """
         rv, json = self.client.post('/api/v1/transactions/', data={
             'points': 100,
             'payer': 'Fetch',
@@ -57,6 +66,8 @@ class TestSpendNegative(unittest.TestCase):
             self.assertTrue(False, 'Missing payer ' + e.args[0])
 
     def test3Trans2Payer1Spend_PayerWithNegLTSpend_OnlySecondPayerHasPoints(self):
+        """
+        """
         rv, json = self.client.post('/api/v1/transactions/', data={
             'points': 100,
             'payer': 'Fetch',
@@ -73,17 +84,17 @@ class TestSpendNegative(unittest.TestCase):
             'timestamp': timestamp.getTimestampStr()
         })
         rv, json = self.client.post('/api/v1/points/', data={
-            'points': 200
+            'points': 100
         })
         try:
             self.assertTrue(json['Fetch'] == -80)
-            self.assertTrue(json['Epic'] == -120)
+            self.assertTrue(json['Epic'] == -20)
         except KeyError as e:
             self.assertTrue(False, 'Missing payer ' + e.args[0])
         rv, json = self.client.get('/api/v1/points/')
         try:
             self.assertTrue(json['Fetch'] == 0)
-            self.assertTrue(json['Epic'] == 880)
+            self.assertTrue(json['Epic'] == 980)
         except KeyError as e:
             self.assertTrue(False, 'Missing payer ' + e.args[0])
 

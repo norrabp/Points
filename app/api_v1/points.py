@@ -1,3 +1,4 @@
+""" Main endpoints for the application """
 from . import api
 from .. import Transactions, PayerTotals
 from ..exceptions import ValidationError
