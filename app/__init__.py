@@ -1,6 +1,21 @@
+""" Module containing flask application """
 import os
 from flask import Flask
 
+"""
+Data structures containing transactions and points per payer
+Transactions: [
+    {
+        payer: <payer name>
+        points: <points added by transaction>
+        points_remaining: <points not spent yet for this transaction>
+        timestamp: <timestamp the transaction was made
+    },
+]
+PayerTotals: {
+    <payer name>: <totals points for payer>
+}
+"""
 Transactions = []
 PayerTotals = {}
 
@@ -8,7 +23,11 @@ PayerTotals = {}
 def create_app(config_name):
     """
     Create an application instance. Load configuration and register blueprints
-    
+    arguments:
+        config_name - Which configuration to load from the app. Either "development",
+            "testing", or "production"
+    returns: application instance
+
     """
     app = Flask(__name__)
 
