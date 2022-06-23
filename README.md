@@ -74,12 +74,14 @@ and error handling
 To run the application normally, type in 
 
 ```
-./points.sh r
+export FLASK_CONFIG=development
+python3 run.py
 ```
 
 To run the tests, run
 ```
-./points.sh t
+export FLASK_CONFIG=testing
+python3 test.py
 ```
 
 ## APIs
