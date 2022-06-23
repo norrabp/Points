@@ -4,6 +4,7 @@ This server allow you to add new transactions and spend points from those transa
 ## Install
 
 Install [Python3.6](https://www.python.org/downloads/) or greater
+
 Clone this project
 
 ```
