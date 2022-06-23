@@ -29,7 +29,7 @@ class TestValidation(unittest.TestCase):
             'timestamp': timestamp.getTimestampStr(2022,1,5,12,0,0)
         })
         with self.assertRaises(ValidationError):
-            rv, json = self.client.post('/api/v1/points/', data={
+            rv, json = self.client.put('/api/v1/points/', data={
                 'points': -1
             })
             self.assertTrue(rv.status_code == 400)
@@ -83,7 +83,7 @@ class TestValidation(unittest.TestCase):
             })
             self.assertTrue(rv.statusCode == 400)
         with self.assertRaises(ValidationError):
-            rv, json = self.client.post('/api/v1/points/', data={
+            rv, json = self.client.put('/api/v1/points/', data={
                 'payer': 'Fetch'
             })
             self.assertTrue(rv.statusCode == 400)

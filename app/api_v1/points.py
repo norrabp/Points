@@ -60,7 +60,7 @@ def get_payers():
     return jsonify(PayerTotals)
 
 
-@api.route('/points/', methods=['POST'])
+@api.route('/points/', methods=['PUT'])
 def spend_points():
     """ Spend points starting with the earliest transaction"""
     # Validate input
@@ -77,7 +77,7 @@ def spend_points():
     # Verify there are enough points to spend
     if total_points < points_to_spend:
         return jsonify({"message": "Not enough points to spend",
-                        "totalPoints": total_points})
+                        "total_points": total_points})
     # Spend points and update payer totals
     for transaction in Transactions:
         if points_to_spend > 0:
@@ -90,5 +90,11 @@ def spend_points():
                 spent_per_payer[payer] -= points_used
         else:
             break
-    return jsonify(spent_per_payer), 201
+    response = []
+    for payer, points in spent_per_payer.items():
+        response.append({
+            'payer': payer,
+            'points': points
+        })
+    return jsonify(response), 200
 

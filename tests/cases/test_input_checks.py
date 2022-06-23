@@ -23,7 +23,7 @@ class TestInputs(unittest.TestCase):
         Verify that if there are no transactions a code 200 returns along with
         a message stating why the spend was not possible
         """
-        rv, json = self.client.post('/api/v1/points/', data={'points': 100})
+        rv, json = self.client.put('/api/v1/points/', data={'points': 100})
         self.assertTrue(rv.status_code == 200)
         self.assertTrue('message' in json)
 
@@ -37,7 +37,7 @@ class TestInputs(unittest.TestCase):
             'payer': 'Fetch',
             'timestamp': timestamp.getTimestampStr(2022,1,5,12,0,0)
         })
-        rv, json = self.client.post('/api/v1/points/', data={
+        rv, json = self.client.put('/api/v1/points/', data={
             'points': 101
         })
         self.assertTrue('message' in json)

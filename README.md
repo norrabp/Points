@@ -1,5 +1,5 @@
 # Points
-Backend web server that stores points from transactions and spends points based on the 
+This server allow you to add new transactions and spend points from those transactions. Each transaction has a payer the transaction was made with and the number of points obtained by each transaction. When spending these points, the points from the earliest transactions are spent first.
 
 ## Install
 
@@ -14,26 +14,9 @@ Install project dependencies:
 
 ```
 cd Points
-./setup.sh
-```
-
-## Environments
-If testing run the following command (may differ between systems)
-
-```
-export FLASK_CONFIG=testing
-```
-
-If developing run the following command (If you need to check that authentication works don't use this environment)
-
-```
-export FLASK_CONFIG=development
-```
-
-If deploying to production run the following
-
-```
-export FLASK_CONFIG=development
+python3 -m venv env
+source env/bin/activate
+pip3 install -r requirements.txt
 ```
 
 ## Project Structure
@@ -42,326 +25,151 @@ The repository should look like this:
 ```
 .
 ├── README.md
-├── catalog
-│   ├── app
+├── app
+│   ├── __init__.py
+│   ├── api_v1
 │   │   ├── __init__.py
-│   │   ├── api_v1
-│   │   │   ├── __init__.py
-│   │   │   ├── categories.py
-│   │   │   ├── errors.py
-│   │   │   └── items.py
-│   │   ├── auth.py
-│   │   ├── exceptions.py
-│   │   ├── models.py
-│   │   └── schemas.py
-│   ├── config
-│   │   ├── development.py
-│   │   ├── production.py
-│   │   ├── testing.py
-│   ├── run.py
-│   ├── test.py
-│   └── tests
-│       ├── __init__.py
-│       ├── catalog.json
-│       ├── test_client.py
-│       ├── tests.py
-└── requirements.txt
+│   │   ├── errors.py
+│   │   └── points.py
+│   ├── core
+│   │   ├── __init__.py
+│   │   └── core.py
+│   └── exceptions.py
+├── config
+│   ├── development.py
+│   └── testing.py
+├── points.sh
+├── requirements.txt
+├── run.py
+├── test.py
+└── tests
+    ├── __init__.py
+    ├── cases
+    │   ├── __init__.py
+    │   ├── test_add_transactions.py
+    │   ├── test_input_checks.py
+    │   ├── test_spend_points_negative.py
+    │   ├── test_spend_points_positive.py
+    │   └── test_validation.py
+    └── utils
+        ├── __init__.py
+        ├── client.py
+        └── timestamp.py
 ```
-The website is designed around Categories, which are containers for Items
+`/app` contains all the code for the web server including APIs, core functions,
+and error handling
+- `/api_v1` contains the HTTP endpoints for getting transactions and payer totals, adding transactions, and spending points in `points.py` and error handling in `errors.py`
+- `/core` contains core functions used by the api. Currently it only contains a function that subtracts points from a transaction
 
-`models.py` contains the SQLAlchemy database models and 
-`schemas.py` contain the Marshmallow schemas for Categories and Items
+`/config` contains the configuration settings for testing versus development.
 
-`auth.py` contains the authentication APIs (except for `get-auth-token`)
-
-`/config` contains the configuration files as explained earlier
-
-`/tests` contains `tests.py`, which contains the test cases and `test_client.py` which is the mechanism by which `tests.py` communicates with the website APIs
-
-`/api_v1` contains the APIs for Categories, Items, and Errors respectively
-
-`exceptions.py` contains a custom exception used
-
-`/catalog/app/__init__.py` will create the Flask application, set the configuration based on the environment variable, link with the SQLAlchemy db and Marshmallow, import the api blueprint and set up the token generation API. It is from this file that `db` and `app` will be imported\created from
+`/tests` contains the unit tests for the application.
+- `/cases` contains the files for all unit test cases
+- `/utils` contains utility functions and a test client interface to interact with the server
 
 ## Running the Application
 
 To run the application normally, type in 
 
 ```
-python run.py
+./points.sh r
 ```
-
-`run.py` will configure a user `Admin` with password `Cookie stop snoring` from which you have admin privileges
 
 To run the tests, run
 ```
-python tests.py
+./points.sh t
 ```
 
 ## APIs
 
 Run the following commands in your terminal (separate from the one running the instance of the website)
 
-##### Get Token
-To obtain a JSON object with your token 
-
-```
-http --auth GotIt:GotItAI http://localhost:5000/get-auth-token
-```
-
-You should receive a response like this
-```
-{
-    "token": "eyJhbGciOiJIUzI1NiIsImV4cCI6MTU2MDMwODc0NiwiaWF0IjoxNTYwMzA1MTQ2fQ.eyJpZCI6MX0.T9fycT3Lg6AXjua57_3cc8VwEpn3nHHhcTYXsiChiYU"
-}
-```
-When making any `POST`, `PUT`, or `DELETE` requests begin them with the following
-
-```
-http --auth <YOUR TOKEN HERE> <Method> http://localhost:5000/<rest of URL> <headers>
-```
-
-### Category
-
 ##### Getters
 
-- Get a list of all categories
-    - Command: `http GET http://localhost:5000/api/v1/categories`
+- Get a list of all transactions
+    - Command: `http GET http://localhost:5000/api/v1/transactions/`
     - Returns:
         - Status Code: `200`
         - Data: 
         ```
-        {
-            "categories": [
-                {
-                    "id": <id>,
-                    "name": <category name>
-                    "items": [
-                        <item id>
-                    ]
-                }
-            ]
-        }
-        ```
-
-- Get a specific category
-    - Command: `http GET http://localhost:5000/api/v1/categories/<id>`
-    - Returns:
-        - Status Code: `200`
-        - Data: 
-        ```
-        {
-            "id": <id>,
-            "name": <category name>
-            "items": [
-                <item id>
-            ]
-        }
-        ```
-
-##### Create
-
-- Create a new category
-    - Command: `http --auth <your token>: POST http://localhost:5000/api/v1/categories name=<category name>`
-    - Returns:
-        - Status Code: `201`
-        - Data: 
-        ```
+        [
             {
-                "id: <id>,
-                "name": <category name>
-                "items": []
+                payer: <payer name>
+                points: <points from the transaction>
+                points_remaining: <remaining points to spend on the transaction>
+                timestamp: <timestamp of the transaction>
+            },
+            ...
+        ]
+        ```
+
+- Get a summary of the points associated with each payer
+    - Command: `http GET http://localhost:5000/api/v1/points/`
+    - Returns:
+        - Status Code: `200`
+        - Data: 
+        ```
+        [
+            {
+                payer: <payer name>
+                points: <total points the payer currently has>
             }
-        ```
-
-##### Edit
-
-- Edit a category
-    - Command: `http --auth <your token>: PUT http://localhost:5000/api/v1/categories/<id> name=<new category name>`
-    - Returns:
-        - Status Code: `200`
-        - Data: 
-        ```
-        {
-            "id": <id>,
-            "items": [
-                <item id>
-            ],
-            "name": <category name>
-        }
-        ```
-
-##### Delete
-
-- Delete a category
-    - Command: `http --auth <your token>: DELETE http://localhost:5000/api/v1/categories/<id>`
-    - Returns:
-        - Status Code: `204`
-
-### Items
-
-##### Getters
-
- - Get all Items in a category
-    - Command: `http GET http://localhost:5000/api/v1/categories/<id>/items`
-    - Returns:
-        - Status Code: `200`
-        - Data: 
-        ```
-        {
-            "<category name> items": [
-                {
-                    "id": <item id>
-                    "title": <item title>
-                    "description": <item description>
-                    "category": <category id>
-                }
-            ]
-        }
-        ```
-
-- Get all Items
-    - Command: `http GET http://localhost:5000/api/v1/items`
-    - Returns:
-        - Status Code: `200`
-        - Data: 
-        ```
-        {
-            "Items": [
-                {
-                    "id": <item id>
-                    "title": <item title>
-                    "description": <item description>
-                    "category": <category id> 
-                }
-            ]
-        }
-        ```
-
-- Get a specific Item
-    - Command: `http GET http://localhost:5000/api/v1/items/<id>`
-    - Returns:
-        - Status Code: `200`
-        - Data: 
-        ```
-        {
-            "id": <item id>
-            "title": <item title>
-            "description": <item description>
-            "category": <category id>
-        }
+        ]
         ```
 
 ##### Create
 
-- Create a new Item
-    - Command: `http --auth <your token>: POST http://localhost:5000/api/v1/categories/<category id>/items title=<item title> description=<item description>`
+- Add a transaction
+    - Command: `http POST http://localhost:5000/api/v1/transactions/`
+    - Arguments:
+        - payer: Name of the payer for the transaction
+        - points: Points added by the transaction
+        - timestamp: OPTIONAL: timestamp for the transaction in YYYY-MM-DDTHH:MM:SSZ format
+            - Ex. "2020-11-02T14:00:00Z"
+            - Defaults to now
     - Returns:
         - Status Code: `201`
         - Data: 
         ```
+        [
+            {
+                payer: <payer name>
+                points: <points from the transaction>
+                points_remaining: <remaining points to spend on the transaction>
+                timestamp: <timestamp of the transaction>
+            },
+            ...
+        ]
+        ```
+    - If the transaction is negative and would make the payer total negative:
+        - Status Code: `200`
+        - Data:
+        ```
         {
-            "id": <item id>
-            "title": <item title>
-            "description": <item description>
-            "category": <category id>
+            'message': "Transaction would make payer points lets than 0",
+            'payer': <name of payer>,
+            'payer_points': <total points for that payer>
         }
         ```
-
-##### Edit
-
-NOTE: This api is designed so that you are allowed to edit between 0 and 3 attributes. You can edit simply the title and the description and category remain the same. You can also edit the category of the item if you want to put it in a new category
-
-- Edit an Item
-    - Command: `http --auth <your token>: PUT http://localhost:5000/api/v1/items/<id> title=<new title> description=<new description> category=<new category id>`
+- Spend points
+    - Command: `http PUT http://localhost:5000/api/v1/points/`
+    - Arguments:
+        - points: Points to spend
     - Returns:
         - Status Code: `200`
         - Data: 
         ```
         {
-            "id": <item id>
-            "title": <item title>
-            "category": <category id>
-            "description": <item description>
+            <payer name>: <points subtracted from payer total>
         }
         ```
-
-##### Delete
-- Delete an Item
-    - Command: `http --auth <your token>: DELETE http://localhost:5000/api/v1/items/<id>`
-    - Returns:
-        - Status Code: `204`
-
-### Users
-
-##### Getters
-
-- Get all users
-    - Command: `http GET http://localhost:5000/api/v1/users`
-    - Returns:
-        - Status Code: `200`
-        - Data: 
-        ```
-        {
-            "users": [
-                {
-                    "id": <user id>,
-                    "password_hash": <user password hash>,
-                    "username": <username>
-                }
-            ]
-        }
-        ```
-                
-- Get specific users
-    - Command: 'http GET http://localhost:5000/api/v1/users/<id>'
-    - Returns:
+    - If points specified greater than the total points of all payers:
         - Status Code: `200`
         - Data:
         ```
         {
-            "id": <user id>,
-            "password_hash": <user password hash>,
-            "username": <username>
+            "message": "Not enough points to spend",
+            "total_points": <Sum of all payers current points>
         }
         ```
 
-##### Create
-
-- Create a new user
-    - Command: `http POST http://localhost:5000/api/v1/users username=<username> password=<password>`
-    - Returns:
-        - Status Code: `201`
-        - Data:
-        ```
-        {
-            "id": <user id>,
-            "token": <user token>
-        }
-        ```
-
-##### Edit
-
-NOTE: Similar to Items, one can edit one of or both username or password. Instead of using the token, a user will need to enter in their username and password in order to change their account details. Also 'Admin' can edit any account
-
-- Edit a user's information
-    - Command: `http --auth <username>:<password> PUT http://localhost:5000/api/v1/users username<username> password=<password>`
-    - Returns:
-        - Status Code: `200`
-        - Data:
-        ```
-        {
-            "token": <new user token>
-        }
-        ```        
-
-##### Delete
-
-NOTE: As is with PUT requests, DELETE requests also need the user to enter in his username and password or request as 'Admin'
-
-- Delete a user
-    - Command: `http --auth <username>:<password> PUT http://localhost:5000`
-    - Returns:
-        - Status Code: `200`
-        

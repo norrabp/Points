@@ -29,13 +29,14 @@ class TestSpendPositive(unittest.TestCase):
             'payer': 'Fetch',
             'timestamp': timestamp.getTimestampStr(2022,1,5,12,0,0)
         })
-        rv, json = self.client.post('/api/v1/points/', data={
+        rv, json = self.client.put('/api/v1/points/', data={
             'points': 100
         })
         try:
-            self.assertTrue(json['Fetch'] == -100)
+            self.assertTrue(json[0]['payer'] == 'Fetch')
+            self.assertTrue(json[0]['points'] == -100)
         except KeyError as e:
-            self.assertTrue(False, 'Missing payer ' + e.args[0])
+            self.assertTrue(False, 'Missing ' + e.args[0])
         rv, json = self.client.get('/api/v1/points/')
         try:
             self.assertTrue(json['Fetch'] == 0)
@@ -52,11 +53,12 @@ class TestSpendPositive(unittest.TestCase):
             'payer': 'Fetch',
             'timestamp': timestamp.getTimestampStr(2022,1,5,12,0,0)
         })
-        rv, json = self.client.post('/api/v1/points/', data={
+        rv, json = self.client.put('/api/v1/points/', data={
             'points': 80
         })
         try:
-            self.assertTrue(json['Fetch'] == -80)
+            self.assertTrue(json[0]['payer'] == 'Fetch')
+            self.assertTrue(json[0]['points'] == -80)
         except KeyError as e:
             self.assertTrue(False, 'Missing payer ' + e.args[0])
         rv, json = self.client.get('/api/v1/points/')
@@ -64,11 +66,12 @@ class TestSpendPositive(unittest.TestCase):
             self.assertTrue(json['Fetch'] == 20)
         except KeyError as e:
             self.assertTrue(False, 'Missing payer ' + e.args[0])
-        rv, json = self.client.post('/api/v1/points/', data={
+        rv, json = self.client.put('/api/v1/points/', data={
             'points': 10
         })
         try:
-            self.assertTrue(json['Fetch'] == -10)
+            self.assertTrue(json[0]['payer'] == 'Fetch')
+            self.assertTrue(json[0]['points'] == -10)
         except KeyError as e:
             self.assertTrue(False, 'Missing payer ' + e.args[0])
         rv, json = self.client.get('/api/v1/points/')
@@ -91,11 +94,12 @@ class TestSpendPositive(unittest.TestCase):
             'payer': 'Fetch',
             'timestamp': timestamp.getTimestampStr()
         })
-        rv, json = self.client.post('/api/v1/points/', data={
+        rv, json = self.client.put('/api/v1/points/', data={
             'points': 180
         })
         try:
-            self.assertTrue(json['Fetch'] == -180)
+            self.assertTrue(json[0]['payer'] == 'Fetch')
+            self.assertTrue(json[0]['points'] == -180)
         except KeyError as e:
             self.assertTrue(False, 'Missing payer ' + e.args[0])
         rv, json = self.client.get('/api/v1/points/')
@@ -119,12 +123,14 @@ class TestSpendPositive(unittest.TestCase):
             'payer': 'Epic',
             'timestamp': timestamp.getTimestampStr()
         })
-        rv, json = self.client.post('/api/v1/points/', data={
+        rv, json = self.client.put('/api/v1/points/', data={
             'points': 180
         })
         try:
-            self.assertTrue(json['Fetch'] == -100)
-            self.assertTrue(json['Epic'] == -80)
+            self.assertTrue(json[0]['payer'] == 'Fetch')
+            self.assertTrue(json[0]['points'] == -100)
+            self.assertTrue(json[1]['payer'] == 'Epic')
+            self.assertTrue(json[1]['points'] == -80)
         except KeyError as e:
             self.assertTrue(False, 'Missing payer ' + e.args[0])
         rv, json = self.client.get('/api/v1/points/')
@@ -155,12 +161,14 @@ class TestSpendPositive(unittest.TestCase):
             'payer': 'Fetch',
             'timestamp': timestamp.getTimestampStr()
         })
-        rv, json = self.client.post('/api/v1/points/', data={
+        rv, json = self.client.put('/api/v1/points/', data={
             'points': 201
         })
         try:
-            self.assertTrue(json['Fetch'] == -101)
-            self.assertTrue(json['Epic'] == -100)
+            self.assertTrue(json[0]['payer'] == 'Fetch')
+            self.assertTrue(json[0]['points'] == -101)
+            self.assertTrue(json[1]['payer'] == 'Epic')
+            self.assertTrue(json[1]['points'] == -100)
         except KeyError as e:
             self.assertTrue(False, 'Missing payer ' + e.args[0])
         rv, json = self.client.get('/api/v1/points/')
