@@ -117,7 +117,8 @@ Run the following commands in your terminal (separate from the one running the i
             {
                 payer: <payer name>
                 points: <total points the payer currently has>
-            }
+            },
+            ...
         ]
         ```
 
@@ -164,7 +165,8 @@ Run the following commands in your terminal (separate from the one running the i
         - Data: 
         ```
         {
-            <payer name>: <points subtracted from payer total>
+            <payer name>: <points subtracted from payer total>,
+            ...
         }
         ```
     - If points specified greater than the total points of all payers:
