@@ -1,5 +1,5 @@
 # Points
-This server allow you to add new transactions and spend points from those transactions. Each transaction has a payer the transaction was made with and the number of points obtained by each transaction. When spending these points, the points from the earliest transactions are spent first.
+This server allows you to add new transactions and spend points from those transactions. Each transaction has a payer the it was made with and the number of points obtained. When spending these points, the points from the earliest transactions are spent first.
 
 ## Install
 
